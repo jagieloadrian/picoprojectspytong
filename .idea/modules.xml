@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/LedTest/LedTest.iml" filepath="$PROJECT_DIR$/LedTest/LedTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Oled4PinScreen/Oled4PinScreen.iml" filepath="$PROJECT_DIR$/Oled4PinScreen/Oled4PinScreen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PicoProjectsPythong.iml" filepath="$PROJECT_DIR$/PicoProjectsPythong.iml" />
+    </modules>
+  </component>
+</project>
