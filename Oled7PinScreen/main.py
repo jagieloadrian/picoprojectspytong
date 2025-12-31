@@ -1,18 +1,37 @@
 import bluetooth
-from machine import Pin, I2C
+from machine import Pin, SPI
 import time
 
 from modules.BLESimplePeripheral import BLESimplePeripheral
-from modules.ssd1306 import SSD1306_I2C
+from modules.ssd1306 import SSD1306_SPI
+
 
 def main() -> None:
-    i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400 * 1000)
-    display = SSD1306_I2C(128, 32, i2c)
+    print("Setup spi")
+    spi = SPI(0, baudrate=500000, polarity=0, phase=0,
+              sck=Pin(18),   # CLK
+              mosi=Pin(19))  # DIN/MOSI
+
+    cs = Pin(17, Pin.OUT)   # CS
+    dc = Pin(16, Pin.OUT)   # D/C
+    res = Pin(20, Pin.OUT)  # RES (opcjonalny)
+
+    print("Setup display")
+    display = SSD1306_SPI(128, 64, spi, dc, res, cs)
+
+    res.value(0)
+    time.sleep(0.1)
+    res.value(1)
+    time.sleep(0.1)
+
+    display.fill(1)
+    display.show()
+    time.sleep(2)
 
     display.fill(0)
     display.text("BLE Starting...", 0, 10)
     display.show()
-
+    print("Looking for ble devices...")
     ble = bluetooth.BLE()
     uart = BLESimplePeripheral(ble=ble, display=display)
 
