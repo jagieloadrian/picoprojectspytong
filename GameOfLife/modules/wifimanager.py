@@ -159,7 +159,7 @@ def startPortal():
                     # Save credentials to file
                     config = {'ssid': ssid, 'password': password}
                     try:
-                        with open('wifi_config.json', 'w') as f:
+                        with open('env.json', 'w') as f:
                             json.dump(config, f)
                         print(f"Saved WiFi credentials for network: {ssid}")
 
