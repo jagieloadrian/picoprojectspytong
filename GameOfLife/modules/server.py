@@ -1,5 +1,5 @@
-import ujson as json
 import uasyncio as asyncio
+import ujson as json
 
 
 async def runServer(game):
@@ -8,12 +8,23 @@ async def runServer(game):
         while await reader.readline() != b"\r\n":
             pass  # avoid headers
 
-        request = str(requestLine)
-        if '/stats' in request:
+        try:
+            requestStr = requestLine.decode('utf-8')
+        except UnicodeError:
+            requestStr = requestLine.decode('utf-8', 'ignore')
+        print("Request line:", requestStr)
+
+        if 'GET /stats' in requestStr:
             state = game.getStats()
-            response = 'HTTP/1.0 200 OK\r\nContent-type: application/json\r\n\r\n' + json.dumps(state)
+            response = 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n' + json.dumps(state)
+        elif 'GET /health' in requestStr:
+            response = 'HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\nOK'
+
+        elif 'GET /' in requestStr or requestStr == 'GET / HTTP/1.1':
+            response = 'HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\nBrian\'s Brain is running. Use /stats or /health'
+
         else:
-            response = 'HTTP/1.0 404 Not Found\r\nContent-type: text/plain\r\n\r\nNot Found'
+            response = 'HTTP/1.0 404 Not Found\r\nContent-Type: text/plain\r\n\r\nNot Found'
 
         writer.write(response.encode())
         await writer.drain()

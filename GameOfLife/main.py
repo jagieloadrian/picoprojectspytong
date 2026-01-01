@@ -1,7 +1,7 @@
 import asyncio
 from machine import Pin
 
-from modules.BriansBrain import BriansBrain, randomBrainCells
+from modules.EpidemicModel import Epidemic
 from modules.server import runServer
 from modules.wifi import connectWifi, syncTime
 
@@ -11,8 +11,9 @@ async def runGame(gameInstance):
     while True:
         gameInstance.evolve()
         print(f"Run #{game.runCount} | Gen {game.generation} | "
-              f"On: {game.stats['onCount']} | Dying: {game.stats['dyingCount']} | "
-              f"Activity: {game.stats['activityPct']}%")
+              f"Infected: {game.stats['infected']} | Recovered: {game.stats['recovered']} | "
+              f"Susceptible: {game.stats['susceptible']} | InfectedPct: {game.stats['infectedPct']}% | "
+              f"RecoveredPct: {game.stats['recoveredPct']}%")
         if gameInstance.generation % saveInternal == 0:
             gameInstance.saveState()
 
@@ -21,8 +22,7 @@ async def runGame(gameInstance):
 
 if connectWifi():
     syncTime()
-    initial_cells = randomBrainCells(200, 40)
-    game = BriansBrain(initial_cells)
+    game = Epidemic()
     game.loadState()
 
     loop = asyncio.get_event_loop()
