@@ -9,7 +9,7 @@ from modules.wifi import connectWifi, syncTime
 
 onboard_led = Pin("LED", Pin.OUT)
 async def runGame(gameInstance):
-    saveInternal = 10
+    saveInternal = 2
     while True:
         gameInstance.evolve()
         print(f"Run #{game.runCount} | Gen {game.generation} | "
