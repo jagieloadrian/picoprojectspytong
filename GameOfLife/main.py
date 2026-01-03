@@ -1,4 +1,6 @@
 import asyncio
+from time import sleep
+
 from machine import Pin
 
 from modules.EpidemicModel import Epidemic
@@ -8,6 +10,8 @@ from modules.server import runServer
 from modules.wifi import connectWifi, syncTime
 
 onboard_led = Pin("LED", Pin.OUT)
+
+
 async def runGame(gameInstance):
     saveInternal = 2
     while True:
@@ -20,9 +24,12 @@ async def runGame(gameInstance):
             gameInstance.saveState()
         await sendStats(gameInstance)
 
-        onboard_led.toggle()
+        toggleLed()
         await asyncio.sleep(30)
-
+def toggleLed():
+    onboard_led.on()
+    sleep(1)
+    onboard_led.off()
 
 async def sendStats(gameInstance):
     config = loadEnvVariablesForSender()
