@@ -1,16 +1,14 @@
-import ujson as json
-import os
-
 import network
 import time
 
 import ntptime
 
+from modules.config import loadEnvVariablesForWifi
 from modules.wifimanager import startPortal
 
 
 def connectWifi():
-    wifiConfig = loadEnvVariables()
+    wifiConfig = loadEnvVariablesForWifi()
     if wifiConfig is None:
         print("Could not load wifi configuration - starting configuration page")
         startPortal()
@@ -31,21 +29,6 @@ def connectWifi():
     print("Starting configuration portal...")
     startPortal()
     return False
-
-
-def loadEnvVariables():
-    try:
-        if 'env.json' not in os.listdir():
-            print("Not found file env.json - could not connect  to WIFI!!")
-            return None
-        with open('env.json', 'r') as f:
-            config = json.load(f)
-            return {'ssid': config['ssid'],
-                    'password': config['password']}
-    except Exception as e:
-        print("Error during read env.json:", e)
-        return None
-
 
 def syncTime():
     try:

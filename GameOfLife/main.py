@@ -2,6 +2,8 @@ import asyncio
 from machine import Pin
 
 from modules.EpidemicModel import Epidemic
+from modules.config import loadEnvVariablesForSender
+from modules.sender import sendPayload
 from modules.server import runServer
 from modules.wifi import connectWifi, syncTime
 
@@ -16,9 +18,19 @@ async def runGame(gameInstance):
               f"RecoveredPct: {game.stats['recoveredPct']}%")
         if gameInstance.generation % saveInternal == 0:
             gameInstance.saveState()
+        await sendStats(gameInstance)
 
         onboard_led.toggle()
-        await asyncio.sleep(1)
+        await asyncio.sleep(30)
+
+
+async def sendStats(gameInstance):
+    config = loadEnvVariablesForSender()
+    url = config['hostServer']
+    deviceId = config['deviceId']
+    payload = gameInstance.getPostPayload(deviceId=deviceId)
+    sendPayload(payload, url)
+
 
 if connectWifi():
     syncTime()

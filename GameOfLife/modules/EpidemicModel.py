@@ -1,13 +1,14 @@
-import time
-import ujson as json
 import os
+import time
+
+import ujson as json
 from urandom import randint, random, uniform
 
 
 class Epidemic:
     def __init__(self):
-        self.cells = {}   # (x,y) -> ["I"/"R"/"S", ttl]
-        self.populationPositions = []  # lista pozycji (x,y)
+        self.cells = {}
+        self.populationPositions = []
         self.populationSize = 100
 
         self.generation = 0
@@ -55,11 +56,9 @@ class Epidemic:
 
         self.cells = updated
 
-        # 4️⃣ dodanie nowych infekcji
         for pos in newInfected:
             self.cells[pos] = ["I", self.getRandomInfectionTTL()]
 
-        # 5️⃣ update statystyk
         self.generation += 1
         self.updateStats()
 
@@ -99,7 +98,7 @@ class Epidemic:
 
         print(f"--- NEW EPIDEMIC #{self.runCount} ---")
         print(f"Population = {self.populationSize} | infected = {infectedSeed}")
-        print(f"Infection probability = {round(self.infectionProb*100,2)}%")
+        print(f"Infection probability = {round(self.infectionProb * 100, 2)}%")
         print("-----------------------------------")
 
     # ------------------------------------------------------
@@ -157,3 +156,24 @@ class Epidemic:
                 self.restartGame(True)
         except:
             self.restartGame(True)
+
+    def getPostPayload(self, deviceId):
+        return {
+            "meta": {
+                "deviceId": deviceId,
+                "runId": self.runCount,
+                "generation": self.generation,
+                "timestamp": time.time()
+            },
+            "params": {
+                "populationSize": self.populationSize,
+                "infectionProb": self.infectionProb,
+                "infectionTtlMin": 2,
+                "infectionTtlMax": 5
+            },
+            "state": {
+                "susceptible": self.stats['susceptible'],
+                "infected": self.stats['infected'],
+                "recovered": self.stats['recovered']
+            }
+        }
