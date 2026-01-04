@@ -8,7 +8,7 @@ def getLedPin(type):
         return "LED"
     elif type == DeviceType.ESP32_C3:
         print("Actual type is: ESP32_C3")
-        return 2
+        return 8
     else:
         return Exception("Not defined device")
 

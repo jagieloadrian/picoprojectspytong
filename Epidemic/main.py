@@ -25,17 +25,12 @@ async def runGame(gameInstance):
             gameInstance.saveState()
         await sendStats(gameInstance)
 
-        toggleLed(device)
+        toggleLed()
         await asyncio.sleep(30)
-def toggleLed(deviceType):
-    if deviceType == DeviceType.RPI_PICO_2W:
-        onboard_led.on()
-        sleep(1)
-        onboard_led.off()
-    elif deviceType == DeviceType.ESP32_C3:
-        onboard_led.value(1)
-        sleep(1)
-        onboard_led.value(2)
+def toggleLed():
+    onboard_led.on()
+    sleep(1)
+    onboard_led.off()
 
 async def sendStats(gameInstance):
     config = loadEnvVariablesForSender()
