@@ -1,6 +1,7 @@
 # Epidemic Contract
 
 ## What is epidemic?
+You can find in the module with name Epidemic
 It's a small project for developer board like esp32 or rpi pico 2w which simulate in simple way epidemic in small group of people.
 Starting with between 100-300 people and 10-30 % of infected people.
 
