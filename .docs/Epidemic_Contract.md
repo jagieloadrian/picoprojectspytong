@@ -16,7 +16,7 @@ Example body:
   "meta": {
     "deviceId": "ESP32-C3_1",
     "runId": 1,
-    "timestamp": 820933663,
+    "timestamp": "2026-01-05T15:38:14", //ISO-8601 UTC
     "generation": 9
   },
   "state": {
