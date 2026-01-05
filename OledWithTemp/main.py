@@ -1,52 +1,57 @@
 # Display Image & text on I2C driven ssd1306 OLED display
+import asyncio
+from asyncio import sleep
+
 from machine import Pin, I2C
-from ssd1306 import SSD1306_I2C
-import machine
-import utime
-import onewire, ds18x20, time
+
+from modules.config import getISO8601Time, loadEnvVariablesForSender
+from modules.displayFuncs import displayScroll
+from modules.sender import sendStats
+from modules.ssd1306 import SSD1306_I2C
+from modules.ahtx0 import AHT10
+from modules.wifi import connectToWifi, syncTime
+from modules.server import runServer
 
 
 def main() -> None:
-    ds_pin = machine.Pin(22)
-    ds_sensor = ds18x20.DS18X20(onewire.OneWire(ds_pin))
-    roms = ds_sensor.scan()
+    oled = getOledConfig()
+    aht = getAht10Config()
+    loop = asyncio.get_event_loop()
+    configSender = loadEnvVariablesForSender()
+    deviceIdName = configSender['deviceId']
+    if connectToWifi(oled):
+        syncTime()
+        loop.create_task(displayScroll(oled, aht, delay=0.03))
+        loop.create_task(sendStatsPeriodically(aht))
+        loop.create_task(runServer(aht, deviceIdName))
+    else:
+        line = ["Could not connect with wifi... check configuration"]
+        loop.create_task(displayScroll(oled=oled, lines=line, aht=None, delay=0.02))
+    loop.run_forever()
 
-    print('Found DS devices: ', roms)
 
-    WIDTH  = 128                                            # oled display width
-    HEIGHT = 32                                             # oled display height
-
-    i2c = I2C(0, scl=Pin(9), sda=Pin(8), freq=200000)       # Init I2C using pins GP8 & GP9 (default I2C0 pins)
-    print("I2C Address      : "+hex(i2c.scan()[0]).upper()) # Display device address
-    print("I2C Configuration: "+str(i2c))                   # Display I2C config
+def getAht10Config() -> AHT10:
+    # I2C1 – AHT10
+    i2c_aht = I2C(1, sda=Pin(2), scl=Pin(3), freq=100000)
+    aht = AHT10(i2c_aht)
+    return aht
 
 
-    oled = SSD1306_I2C(WIDTH, HEIGHT, i2c)                  # Init oled display
+def getOledConfig() -> SSD1306_I2C:
+    # I2C0 – OLED
+    WIDTH = 128  # oled display width
+    HEIGHT = 32  # oled display height
+    i2c_oled = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+    oled = SSD1306_I2C(WIDTH, HEIGHT, i2c_oled)
+    return oled
 
 
+async def sendStatsPeriodically(aht):
     while True:
+        print("Temp:", round(aht.temperature,2), "Hum:", round(aht.relative_humidity,2), "Status:", aht.status, "Timestamp", getISO8601Time())
+        sendStats(aht)
 
-        ds_sensor.convert_temp()
-        time.sleep_ms(750)
-
-        for rom in roms:
-
-            print(rom)
-            print(ds_sensor.read_temp(rom))
-
-            # Clear the oled display in case it has junk on it.
-            oled.fill(0)
-
-            # Add some text
-            oled.text("Temperature: ",12,8)
-            oled.text(str(round(ds_sensor.read_temp(rom),2)),30,30)
-            oled.text("*C",75,30)
-            utime.sleep(2)
-
-
-            # Finally update the oled display so the image & text is displayed
-            oled.show()
-
+        await sleep(30)
 
 if __name__ == "__main__":
     main()
