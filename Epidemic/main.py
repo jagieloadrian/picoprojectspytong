@@ -18,9 +18,10 @@ async def runGame(gameInstance, config):
     while True:
         gameInstance.evolve()
         print(f"Run #{game.runCount} | Gen {game.generation} | "
-              f"Infected: {game.stats['infected']} | Recovered: {game.stats['recovered']} | "
-              f"Susceptible: {game.stats['susceptible']} | InfectedPct: {game.stats['infectedPct']}% | "
-              f"RecoveredPct: {game.stats['recoveredPct']}%")
+              f"Infected: {game.stats['infected']} | InfectedPct: {game.stats['infectedPct']}% | "
+              f"Susceptible: {game.stats['susceptible']} | Recovered: {game.stats['recovered']} | "
+              f"Dead: {game.stats['dead']} | Exposed: {game.stats['exposed']} | LockdownStatus: {game.stats['lockdown']}")
+
         if gameInstance.generation % saveInternal == 0:
             gameInstance.saveState()
         await sendStats(gameInstance, config)
