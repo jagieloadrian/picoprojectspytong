@@ -4,6 +4,7 @@ import time
 import ujson as json
 from urandom import randint, random, uniform
 from modules.HumanStates import HumanStates, HumanType
+from modules.config import getISO8601Time
 
 
 class Epidemic:
@@ -275,7 +276,7 @@ class Epidemic:
                 "deviceId": deviceId,
                 "runId": self.runCount,
                 "generation": self.generation,
-                "timestamp": time.time()
+                "timestamp": getISO8601Time()
             },
             "state": self.stats,
         }
