@@ -126,10 +126,6 @@ class Epidemic:
             "stats": self.stats
         }
 
-    def getStats(self):
-        return {"generation": self.generation, "runCount": self.runCount,
-                "lastSaveTimestamp": self.lastSaveTimestamp, "stats": self.stats}
-
     # ------------------------------------------------------
     def saveState(self):
         try:

@@ -26,3 +26,15 @@ def loadEnvVariablesForSender():
     except Exception as e:
         print("Error during read env.json:", e)
         return None
+
+def loadEnvVariablesDeviceType():
+    try:
+        if 'env.json' not in os.listdir():
+            print("Not found file env.json - could not prepare and send payload!!")
+            return None
+        with open('env.json', 'r') as f:
+            config = json.load(f)
+            return {'deviceType': config['deviceType']}
+    except Exception as e:
+        print("Error during read env.json:", e)
+        return None

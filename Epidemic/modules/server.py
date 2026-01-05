@@ -2,7 +2,7 @@ import uasyncio as asyncio
 import ujson as json
 
 
-async def runServer(game):
+async def runServer(game, deviceId):
     async def serveClient(reader, writer):
         requestLine = await reader.readline()
         while await reader.readline() != b"\r\n":
@@ -15,7 +15,7 @@ async def runServer(game):
         print("Request line:", requestStr)
 
         if 'GET /stats' in requestStr:
-            state = game.getStats()
+            state = game.getPostPayload(deviceId=deviceId)
             response = 'HTTP/1.0 200 OK\r\nContent-Type: application/json\r\n\r\n' + json.dumps(state)
         elif 'GET /health' in requestStr:
             response = 'HTTP/1.0 200 OK\r\nContent-Type: text/plain\r\n\r\nOK'

@@ -1,3 +1,6 @@
+from modules.config import loadEnvVariablesDeviceType
+
+
 class DeviceType:
     RPI_PICO_2W = 1
     ESP32_C3 = 2
@@ -25,5 +28,14 @@ def getDeviceName(type):
         return 'Pico 2W'
     elif type == DeviceType.ESP32_C3:
         return 'ESP32-C3'
+    else:
+        return Exception("Not defined device")
+
+def getDeviceTypeFromConfig():
+    deviceType = loadEnvVariablesDeviceType()['deviceType']
+    if deviceType == DeviceType.RPI_PICO_2W:
+        return DeviceType.RPI_PICO_2W
+    elif deviceType == DeviceType.ESP32_C3:
+        return DeviceType.ESP32_C3
     else:
         return Exception("Not defined device")

@@ -5,15 +5,15 @@ from machine import Pin
 
 from modules.EpidemicModel import Epidemic
 from modules.config import loadEnvVariablesForSender
-from modules.devicetype import DeviceType, getLedPin
+from modules.devicetype import getLedPin, getDeviceTypeFromConfig
 from modules.sender import sendPayload
 from modules.server import runServer
 from modules.wifi import connectWifi, syncTime
 
-device = DeviceType.ESP32_C3
+device = getDeviceTypeFromConfig()
 onboard_led = Pin(getLedPin(device), Pin.OUT)
 
-async def runGame(gameInstance):
+async def runGame(gameInstance, config):
     saveInternal = 2
     while True:
         gameInstance.evolve()
@@ -23,7 +23,7 @@ async def runGame(gameInstance):
               f"RecoveredPct: {game.stats['recoveredPct']}%")
         if gameInstance.generation % saveInternal == 0:
             gameInstance.saveState()
-        await sendStats(gameInstance)
+        await sendStats(gameInstance, config)
 
         toggleLed()
         await asyncio.sleep(30)
@@ -32,11 +32,10 @@ def toggleLed():
     sleep(1)
     onboard_led.off()
 
-async def sendStats(gameInstance):
-    config = loadEnvVariablesForSender()
-    url = config['hostServer']
-    deviceId = config['deviceId']
-    payload = gameInstance.getPostPayload(deviceId=deviceId)
+async def sendStats(gameInstance, configSender):
+    url = configSender['hostServer']
+    deviceIdName = configSender['deviceId']
+    payload = gameInstance.getPostPayload(deviceId=deviceIdName)
     sendPayload(payload, url)
 
 
@@ -44,10 +43,11 @@ if connectWifi(device):
     syncTime()
     game = Epidemic()
     game.loadState()
-
+    config = loadEnvVariablesForSender()
     loop = asyncio.get_event_loop()
-    loop.create_task(runServer(game))
-    loop.create_task(runGame(game))
+    deviceId = config['deviceId']
+    loop.create_task(runServer(game, deviceId))
+    loop.create_task(runGame(game, config))
     loop.run_forever()
 else:
     print("Not found Wifi - game isn't initialized")

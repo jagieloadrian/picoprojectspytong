@@ -84,7 +84,7 @@ def resetInterfaces(wlan):
     if wlan.active():
         wlan.disconnect()
         wlan.active(False)
-        time.sleep(1.5)  # daj ESP32 czas na czyszczenie stanu
+        time.sleep(1.5)  # give ESP32 time for clear the state
     if ap.active():
         ap.active(False)
         time.sleep(0.5)
