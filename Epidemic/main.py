@@ -18,7 +18,7 @@ async def runGame(gameInstance, config):
     while True:
         gameInstance.evolve()
         print(f"Run #{game.runCount} | Gen {game.generation} | "
-              f"Infected: {game.stats['infected']} | InfectedPct: {game.stats['infectedPct']}% | "
+              f"Infected: {game.stats['infected']} | InfectedPct: {round(game.stats['infected']/game.populationSize * 100,2)}% | "
               f"Susceptible: {game.stats['susceptible']} | Recovered: {game.stats['recovered']} | "
               f"Dead: {game.stats['dead']} | Exposed: {game.stats['exposed']} | LockdownStatus: {game.stats['lockdown']}")
 

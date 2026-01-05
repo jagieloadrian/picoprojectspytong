@@ -113,7 +113,7 @@ class Epidemic:
 
     def handleLockdown(self):
         """Lockdown logic - separately"""
-        infectedPct = self.stats["infectedPct"]
+        infectedPct = round(self.stats['infected']/self.populationSize * 100,2)
 
         if not self.lockdownActive and infectedPct >= self.lockdownThreshold:
             self.lockdownActive = True
@@ -196,9 +196,6 @@ class Epidemic:
             "infected": i,
             "recovered": r,
             "dead": d,
-
-            "infectedPct": round(i / self.populationSize * 100, 2),
-            "deadPct": round(d / self.populationSize * 100, 2),
 
             "lockdown": self.lockdownActive,
             "mobilityMul": self.mobilityMultiplier,

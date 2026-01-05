@@ -14,45 +14,43 @@ Example body:
 ```json
 {
   "meta": {
-    "deviceId": "RPI_Pico_2w_1",
-    "runId": 5,
-    "timestamp": 1767617610,
-    "generation": 32
+    "deviceId": "ESP32-C3_1",
+    "runId": 1,
+    "timestamp": 820933663,
+    "generation": 9
   },
   "state": {
-    "infected": 2,
-    "infectedPct": 0.76,
-    "recovered": 44,
-    "deadPct": 1.52,
-    "susceptible": 45,
+    "mobilityMul": 1.0,
+    "susceptible": 49,
+    "infected": 40,
+    "dead": 8,
+    "exposed": 14,
     "lockdown": false,
     "byType": {
       "0": {
-        "infected": 0,
-        "exposed": 0,
+        "recovered": 18,
+        "susceptible": 23,
         "dead": 0,
-        "recovered": 8,
-        "susceptible": 18
+        "exposed": 4,
+        "infected": 8
       },
       "1": {
-        "infected": 2,
-        "exposed": 0,
+        "recovered": 20,
+        "susceptible": 13,
         "dead": 1,
-        "recovered": 16,
-        "susceptible": 13
+        "exposed": 3,
+        "infected": 10
       },
       "2": {
-        "infected": 0,
-        "exposed": 1,
-        "dead": 3,
-        "recovered": 20,
-        "susceptible": 14
+        "recovered": 18,
+        "susceptible": 13,
+        "dead": 7,
+        "exposed": 7,
+        "infected": 22
       }
     },
-    "population": 263,
-    "exposed": 1,
-    "dead": 4,
-    "mobilityMul": 1.0
+    "recovered": 56,
+    "population": 293
   }
 }
 ```
