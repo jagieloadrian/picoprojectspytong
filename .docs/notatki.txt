@@ -1,0 +1,2 @@
+epidemic:
+1. poprawić docsy dla kontraktu
