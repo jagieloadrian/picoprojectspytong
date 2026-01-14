@@ -6,10 +6,10 @@ def sendPayload(payload, url):
     headers = {'Content-Type': 'application/json'}
     try:
         response = urequests.post(
-            url+'/v1/api/stats/epidemic',
+            url+'/api/v1/stats/collect/epidemic',
             data= ujson.dumps(payload),
             headers= headers)
-        print(f"Status code: {response.status_code}")
+        print(f"Status code: {response.status_code}\n")
         print(f"Response body: {response.text}")
 
         response.close()
