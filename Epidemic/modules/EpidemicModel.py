@@ -16,7 +16,7 @@ class Epidemic:
         self.runCount = 1
 
         # -- infection --
-        self.baseInfectionProb = 0.8
+        self.baseInfectionProb = 0.6
         self.infectionProb = self.baseInfectionProb
         self.incubationMin = 2
         self.incubationMax = 5
@@ -25,7 +25,7 @@ class Epidemic:
 
         # --- lockdown ---
         self.lockdownActive = False
-        self.lockdownThreshold = 36.0
+        self.lockdownThreshold = 25.0
         self.lockdownMultiplier = 0.4
         self.mobilityMultiplier = 1.0
 
@@ -168,15 +168,22 @@ class Epidemic:
 
         if not self.lockdownActive and infectedPct >= self.lockdownThreshold:
             self.lockdownActive = True
+            old = self.infectionProb
             self.infectionProb = self.baseInfectionProb * self.lockdownMultiplier
             self.mobilityMultiplier = 0.3
             print("🔒 LOCKDOWN ON")
+            print("DEBUG: lockdown enabled -> baseInfectionProb=", self.baseInfectionProb,
+                  "lockdownMultiplier=", self.lockdownMultiplier,
+                  "old infectionProb=", old, "new infectionProb=", self.infectionProb)
 
         elif self.lockdownActive and infectedPct < self.lockdownThreshold * 0.5:
-            self.lockdownActive = False
-            self.infectionProb = self.baseInfectionProb
-            self.mobilityMultiplier = 1.0
-            print("🔓 LOCKDOWN OFF")
+                self.lockdownActive = False
+                old = self.infectionProb
+                self.infectionProb = self.baseInfectionProb
+                self.mobilityMultiplier = 1.0
+                print("🔓 LOCKDOWN OFF")
+                print("DEBUG: lockdown disabled -> restored infectionProb from", old,
+                      "to", self.infectionProb)
 
     # ------------------------------------------------------
     def getRandomInfectionTTL(self):
@@ -185,7 +192,7 @@ class Epidemic:
     # ------------------------------------------------------
     def restartGame(self, isFirst=False):
         self.populationSize = randint(100, 300)
-        seed = max(1, int(self.populationSize * uniform(0.1, 0.3)))
+        seed = max(1, int(self.populationSize * uniform(0.2, 0.5)))
 
         grid = int((self.populationSize ** 0.5) * 1.4)
         offset = grid // 2
@@ -208,6 +215,9 @@ class Epidemic:
             self.runCount += 1
         self.updateStats()
         self.handleLockdown()
+
+        print("DEBUG: restart -> baseInfectionProb=", self.baseInfectionProb,
+              "infectionProb=", self.infectionProb)
 
         print(f"--- NEW EPIDEMIC #{self.runCount} ---")
         print(f"Population = {self.populationSize} | infected = {seed}")
@@ -268,10 +278,10 @@ class Epidemic:
                 "lastSaveTimestamp": self.lastSaveTimestamp
             },
             "params": {
-                "infectionProb": self.infectionProb,
                 "baseInfectionProb": self.baseInfectionProb,
                 "lockdownActive": self.lockdownActive,
-                "mobilityMultiplier": self.mobilityMultiplier
+                "mobilityMultiplier": self.mobilityMultiplier,
+                "lockdownMultiplier": self.lockdownMultiplier
             },
             "cells": [
                 (x, y, s, ttl, t)
@@ -303,17 +313,23 @@ class Epidemic:
                 self.populationSize = data["meta"]["populationSize"]
                 self.lastSaveTimestamp = data["meta"]["lastSaveTimestamp"]
 
-
-                self.infectionProb = data["params"]["infectionProb"]
                 self.baseInfectionProb = data["params"]["baseInfectionProb"]
                 self.lockdownActive = data["params"]["lockdownActive"]
                 self.mobilityMultiplier = data["params"]["mobilityMultiplier"]
+                self.lockdownMultiplier = data["params"]["lockdownMultiplier"]
+
+                self.infectionProb = self.baseInfectionProb * (self.lockdownMultiplier if self.lockdownActive else 1.0)
 
                 self.cells = {}
                 for x, y, s, ttl, t in data["cells"]:
                     self.cells[(x, y)] = [s, ttl, t]
 
                 self.updateStats()
+
+                print("DEBUG: loaded baseInfectionProb=", self.baseInfectionProb,
+                      "infectionProb=", self.infectionProb,
+                      "lockdownMultiplier=", self.lockdownMultiplier)
+
                 print("✔ State restored")
                 print("Loaded.")
             else:
