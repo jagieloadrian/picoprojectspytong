@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Epidemic/Epidemic.iml" filepath="$PROJECT_DIR$/Epidemic/Epidemic.iml" />
-      <module fileurl="file://$PROJECT_DIR$/LedTest/LedTest.iml" filepath="$PROJECT_DIR$/LedTest/LedTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Oled7PinScreen/Oled7PinScreen.iml" filepath="$PROJECT_DIR$/Oled7PinScreen/Oled7PinScreen.iml" />
-      <module fileurl="file://$PROJECT_DIR$/OledWithTemp/OledWithTemp.iml" filepath="$PROJECT_DIR$/OledWithTemp/OledWithTemp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/PicoProjectsPythong.iml" filepath="$PROJECT_DIR$/PicoProjectsPythong.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/PicoProjectsPythong.iml" filepath="$PROJECT_DIR$/.idea/PicoProjectsPythong.iml" />
     </modules>
   </component>
 </project>

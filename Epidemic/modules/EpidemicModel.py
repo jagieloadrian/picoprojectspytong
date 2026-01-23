@@ -16,7 +16,7 @@ class Epidemic:
         self.runCount = 1
 
         # -- infection --
-        self.baseInfectionProb = 0.3
+        self.baseInfectionProb = 0.8
         self.infectionProb = self.baseInfectionProb
         self.incubationMin = 2
         self.incubationMax = 5
@@ -25,7 +25,7 @@ class Epidemic:
 
         # --- lockdown ---
         self.lockdownActive = False
-        self.lockdownThreshold = 18.0
+        self.lockdownThreshold = 36.0
         self.lockdownMultiplier = 0.4
         self.mobilityMultiplier = 1.0
 
@@ -34,6 +34,7 @@ class Epidemic:
         self.stats = {}
 
     # ------------------------------------------------------
+    # python
     def evolve(self):
         neighbors = [(-1,-1),(-1,0),(-1,1),
                      (0,-1),        (0,1),
@@ -43,19 +44,51 @@ class Epidemic:
         newExposed = set()
         updated = {}
 
+        # --- preserve dead positions so they cannot be overwritten ---
+        dead_positions = {pos for pos, (state, _, _) in self.cells.items() if state == HumanStates.D}
+
         # --- move ---
         movedCells = {}
+        # first reserve dead cells (immutable)
+        for pos in dead_positions:
+            movedCells[pos] = self.cells[pos]
+
         for (x, y), cell in self.cells.items():
-            nx, ny = self.moveAgent(x, y, cell[2])
-            if(nx, ny) not in movedCells:
-                movedCells[(nx, ny)] = cell
+            state, ttl, t = cell
+
+            # already reserved dead
+            if state == HumanStates.D:
+                continue
+
+            nx, ny = self.moveAgent(x, y, t)
+            target = (nx, ny)
+
+            # never place into a reserved dead position or already occupied moved cell
+            if target in movedCells or target in dead_positions:
+                # try to keep agent in original cell if free and not dead
+                if (x, y) not in movedCells and (x, y) not in dead_positions:
+                    movedCells[(x, y)] = cell
+                else:
+                    # find a nearby free & non-dead cell
+                    placed = False
+                    for dx, dy in [(0,0),(1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)]:
+                        pos = (x + dx, y + dy)
+                        if pos not in movedCells and pos not in dead_positions:
+                            movedCells[pos] = cell
+                            placed = True
+                            break
+                    if not placed:
+                        # last resort: keep at original if it's not a dead position (avoid overwriting dead)
+                        if (x, y) not in dead_positions:
+                            movedCells[(x, y)] = cell
+                        # otherwise skip placing to avoid overwriting a dead cell
             else:
-                movedCells[(x,y)] = cell
+                movedCells[target] = cell
 
         self.cells = movedCells
 
         #  count infected neighbors
-        for (x, y), (state, ttl,t) in self.cells.items():
+        for (x, y), (state, ttl, t) in self.cells.items():
             if state == HumanStates.I:
                 for dx, dy in neighbors:
                     pos = (x+dx, y+dy)
@@ -64,6 +97,9 @@ class Epidemic:
 
         # --- new infections (S -> E) ---
         for pos, count in infectedNeighbors.items():
+            # skip dead positions
+            if pos in dead_positions:
+                continue
             state, ttl, t = self.cells[pos]
             if state == HumanStates.S:
                 mul = HumanType.TYPE_PROFILE[t]["infectMul"]
@@ -72,7 +108,16 @@ class Epidemic:
                     newExposed.add(pos)
 
         # --- state evolution ---
+        # start by preserving dead cells in updated
+        for pos in dead_positions:
+            # keep original type for dead cells
+            s, ttl, t = self.cells[pos]
+            updated[pos] = [HumanStates.D, None, t]
+
         for pos, (state, ttl, t) in self.cells.items():
+            # already preserved dead
+            if pos in dead_positions:
+                continue
 
             if state == HumanStates.E:  # incubation
                 if ttl <= 1:
@@ -82,19 +127,24 @@ class Epidemic:
 
             elif state == HumanStates.I:
                 if random() < HumanType.TYPE_PROFILE[t]["mortality"]:
+                    # newly dead — allowed
                     updated[pos] = [HumanStates.D, None, t]
+                    # ensure newly dead position is reserved for this tick (avoid future overwrites within same evolve)
+                    dead_positions.add(pos)
                 elif ttl <= 1:
                     updated[pos] = [HumanStates.R, None, t]
                 else:
-                    updated[pos] = [HumanStates.I, ttl-1, t]# illness
+                    updated[pos] = [HumanStates.I, ttl-1, t]  # illness
 
             else:
                 updated[pos] = [state, ttl, t]
 
-        #  add new exposed
+        #  add new exposed (skip dead positions and never overwrite dead)
         for pos in newExposed:
+            if pos in dead_positions:
+                continue
             t = self.cells[pos][2]
-            updated[pos] = [HumanStates.E, randint(self.incubationMin, self.incubationMax),t]
+            updated[pos] = [HumanStates.E, randint(self.incubationMin, self.incubationMax), t]
 
         self.cells = updated
         self.generation += 1
@@ -156,6 +206,8 @@ class Epidemic:
         self.lastSaveTimestamp = None
         if not isFirst:
             self.runCount += 1
+        self.updateStats()
+        self.handleLockdown()
 
         print(f"--- NEW EPIDEMIC #{self.runCount} ---")
         print(f"Population = {self.populationSize} | infected = {seed}")
