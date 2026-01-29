@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/PicoProjectsPythong.iml" filepath="$PROJECT_DIR$/.idea/PicoProjectsPythong.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SwapColor.iml" filepath="$PROJECT_DIR$/SwapColor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SwapColor.main.iml" filepath="$PROJECT_DIR$/.idea/modules/SwapColor.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SwapColor.test.iml" filepath="$PROJECT_DIR$/.idea/modules/SwapColor.test.iml" />
     </modules>
   </component>
 </project>

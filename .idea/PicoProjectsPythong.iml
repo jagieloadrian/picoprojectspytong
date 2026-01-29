@@ -7,6 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/LedTest" type="micropython-source" />
       <sourceFolder url="file://$MODULE_DIR$/Oled7PinScreen" type="micropython-source" />
       <sourceFolder url="file://$MODULE_DIR$/OledWithTemp" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/LedNeoPixelTest" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/LedRound7PinScreen" type="micropython-source" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
