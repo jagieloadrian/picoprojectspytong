@@ -1,4 +1,3 @@
-import gc
 import time
 
 from modules.ISSState import ISSState
