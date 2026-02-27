@@ -1,31 +1,52 @@
-from time import sleep
+import time
 
 from machine import Pin
 from neopixel import NeoPixel
 
 
 def main() -> None:
-    count = 0
-    ledPin = Pin(22)
-    led = NeoPixel(ledPin, 1)
+    red = 0
+    green = 0
+    blue = 0
+    max_lum = 100
+    ledPin = Pin(21)
+    rgb_led = NeoPixel(ledPin, 1)
+    rgb_led.ORDER = (0, 1, 2, 3)
+    print("RGB LED demo")
+
     while True:
-        led[0] = (0,250,250)
-        led.write()
-        print(f"I'm a useless usb stick no {count}")
-        sleep(1)
-        led[0] = (0,0,250)
-        led.write()
-        print("Should filled blue")
-        sleep(1)
-        led[0] = (250,0,0)
-        led.write()
-        print("Should filled red")
-        sleep(1)
-        led[0] = (0,250,0)
-        led.write()
-        print("Should filled green")
-        sleep(1)
-        count += 1
+        # Fade from black to red
+        for i in range(0, max_lum):
+            red = i
+            blue = max_lum - i
+            # Set the color of the NeoPixel
+            rgb_led[0] = (red, green, blue)
+            rgb_led.write()
+            time.sleep_ms(10)
+
+        time.sleep_ms(300)
+
+        # Fade from red to yellow
+        for i in range(0, max_lum):
+            green = i
+            red = max_lum - i
+            # Set the color of the NeoPixel
+            rgb_led[0] = (red, green, blue)
+            rgb_led.write()
+            time.sleep_ms(10)
+
+        time.sleep_ms(300)
+
+    # Fade from yellow to green
+        for i in range(0, max_lum):
+            blue = i
+            green = max_lum - i
+            # Set the color of the NeoPixel
+            rgb_led[0] = (red, green, blue)
+            rgb_led.write()
+            time.sleep_ms(10)
+
+        time.sleep_ms(300)
 
 if __name__ == "__main__":
     main()

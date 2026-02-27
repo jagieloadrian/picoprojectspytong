@@ -41,7 +41,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../SwapColor/src/test/kotlin" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../SwapColor/src/test/resources" type="java-test-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="17 (2)" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="SwapColor.main" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-test:2.3.0" level="project" />

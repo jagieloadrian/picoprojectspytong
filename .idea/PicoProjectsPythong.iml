@@ -9,6 +9,8 @@
       <sourceFolder url="file://$MODULE_DIR$/OledWithTemp" type="micropython-source" />
       <sourceFolder url="file://$MODULE_DIR$/LedNeoPixelTest" type="micropython-source" />
       <sourceFolder url="file://$MODULE_DIR$/LedRound7PinScreen" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/ISSMapLocator" type="micropython-source" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
