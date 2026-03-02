@@ -1,5 +1,4 @@
 import asyncio
-from time import sleep
 
 from machine import Pin
 
@@ -16,21 +15,22 @@ onboard_led = Pin(getLedPin(device), Pin.OUT)
 async def runGame(gameInstance, config):
     saveInternal = 2
     while True:
-        gameInstance.evolve()
-        print(f"Run #{game.runCount} | Gen {game.generation} | "
-              f"Infected: {game.stats['infected']} | InfectedPct: {round(game.stats['infected']/game.populationSize * 100,2)}% | "
-              f"Susceptible: {game.stats['susceptible']} | Recovered: {game.stats['recovered']} | "
-              f"Dead: {game.stats['dead']} | Exposed: {game.stats['exposed']} | LockdownStatus: {game.stats['lockdown']}")
-
         if gameInstance.generation % saveInternal == 0:
             gameInstance.saveState()
+
+        print(f"Run #{gameInstance.runCount} | Gen {gameInstance.generation} | Population {gameInstance.populationSize} | "
+              f"Infected: {gameInstance.stats['infected']} | InfectedPct: {round(gameInstance.stats['infected']/gameInstance.populationSize * 100,2)}% | "
+              f"Susceptible: {gameInstance.stats['susceptible']} | Recovered: {gameInstance.stats['recovered']} | "
+              f"Dead: {gameInstance.stats['dead']} | Exposed: {gameInstance.stats['exposed']} | LockdownStatus: {gameInstance.stats['lockdown']}")
+
+        gameInstance.evolve()
         await sendStats(gameInstance, config)
 
-        toggleLed()
-        await asyncio.sleep(30)
-def toggleLed():
+        await toggleLed()
+        await asyncio.sleep(2)
+async def toggleLed():
     onboard_led.on()
-    sleep(1)
+    await asyncio.sleep(1)
     onboard_led.off()
 
 async def sendStats(gameInstance, configSender):

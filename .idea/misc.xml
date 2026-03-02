@@ -2,7 +2,8 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (PicoProjectsPythong)" />
   </component>
-  <component name="ProjectRootManager" version="2" default="true" project-jdk-name="Python 3.12 (PicoProjectsPythong)" project-jdk-type="Python SDK">
-    <output url="file://$PROJECT_DIR$/out" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/SwapColor" />
   </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_25" project-jdk-name="Python 3.12 (PicoProjectsPythong)" project-jdk-type="Python SDK" />
 </project>

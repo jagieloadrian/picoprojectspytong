@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Epidemic" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/LedTest" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/Oled7PinScreen" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/OledWithTemp" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/LedNeoPixelTest" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/LedRound7PinScreen" type="micropython-source" />
+      <sourceFolder url="file://$MODULE_DIR$/ISSMapLocator" type="micropython-source" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/LedRound7PinScreen/.venv/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/LedRound7PinScreen/.venv/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/Oled7PinScreen/.venv/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/Oled7PinScreen/.venv/lib" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="MicroPythonToolsStubs" level="project" />
+  </component>
+</module>
