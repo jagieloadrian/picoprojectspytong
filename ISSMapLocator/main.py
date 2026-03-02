@@ -16,7 +16,6 @@ def main():
     connect_wifi()
     syncTime()
     screen = getScreenConfig()
-    scroll = 0
     track = []
     earthMap = getBitmap()
     state = ISSState()
