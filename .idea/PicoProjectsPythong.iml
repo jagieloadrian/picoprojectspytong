@@ -11,6 +11,10 @@
       <sourceFolder url="file://$MODULE_DIR$/LedRound7PinScreen" type="micropython-source" />
       <sourceFolder url="file://$MODULE_DIR$/ISSMapLocator" type="micropython-source" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/LedRound7PinScreen/.venv/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/LedRound7PinScreen/.venv/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/Oled7PinScreen/.venv/bin" />
+      <excludeFolder url="file://$MODULE_DIR$/Oled7PinScreen/.venv/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
