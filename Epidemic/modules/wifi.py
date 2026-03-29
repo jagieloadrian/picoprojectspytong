@@ -2,6 +2,7 @@ import network
 import time
 
 import ntptime
+from network import WLAN
 
 from modules.config import loadEnvVariablesForWifi
 from modules.devicetype import DeviceType
@@ -23,11 +24,11 @@ def connectToWifiByRpiPico2W(device):
         return False
     ssid = wifiConfig['ssid']
     password = wifiConfig['password']
+    bssid = wifiConfig['bssid']
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
+    connectWlan(bssid, password, ssid, wlan)
 
-    print("Connecting to wifi")
-    wlan.connect(ssid, password)
     timeout = 15
     while timeout > 0:
         if wlan.status() == 3:
@@ -50,11 +51,13 @@ def connectToWifiByEsp32C3(device):
 
     ssid = wifiConfig['ssid']
     password = wifiConfig['password']
+    bssid = wifiConfig['bssid']
+
     wlan = network.WLAN(network.STA_IF)
     resetInterfaces(wlan)
     wlan.config(txpower=8, reconnects=3)
-    print("Connecting to Wi-Fi...")
-    wlan.connect(ssid, password)
+
+    connectWlan(bssid, password, ssid, wlan)
 
     timeout = 15
     while timeout > 0:
@@ -68,7 +71,7 @@ def connectToWifiByEsp32C3(device):
             wlan.disconnect()
             time.sleep(0.5)
             resetInterfaces(wlan)
-            wlan.connect(ssid, password)
+            connectWlan(bssid, password, ssid, wlan)
         time.sleep(1)
         timeout -= 1
 
@@ -76,6 +79,16 @@ def connectToWifiByEsp32C3(device):
     print("Starting configuration portal")
     startPortal(device)
     return False
+
+def connectWlan(bssid, password, ssid, wlan: WLAN):
+    if bssid:
+        bssid_bytes = bytes.fromhex(bssid.replace(':', ''))
+        wlan.connect(ssid, password, bssid=bssid_bytes)
+        print(f"Connecting with BSSID: {bssid}")
+    else:
+        wlan.connect(ssid, password)
+        print("Connecting to wifi")
+
 
 def resetInterfaces(wlan):
     print("Resetting interfaces...")
@@ -91,6 +104,7 @@ def resetInterfaces(wlan):
 
     wlan.active(True)
     time.sleep(1)
+
 def syncTime():
     try:
         print("Synchronizing time with NTP...")
