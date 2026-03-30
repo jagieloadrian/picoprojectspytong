@@ -3,15 +3,15 @@ import network, time, os, ujson as json, ntptime
 # ========== WIFI ==========
 def connect_wifi():
     wifiConfig = loadEnvVariablesForWifi()
-    network.WLAN()
     if wifiConfig is None:
         print("Could not load wifi configuration, exit program")
-
 
     ssid = wifiConfig['ssid']
     password = wifiConfig['password']
     bssid = wifiConfig['bssid']
     wlan = network.WLAN(network.STA_IF)
+    wlan.active(False)
+    time.sleep(1)
     wlan.active(True)
 
     if bssid:
@@ -20,11 +20,21 @@ def connect_wifi():
         print(f"Connecting with BSSID: {bssid}")
     else:
         wlan.connect(ssid, password)
+        print(f"Connecting with SSID: {ssid}")
 
-    wlan.config(hostname='iss_locator')
-    while not wlan.isconnected():
+    timeout = 0
+    while not wlan.isconnected() and timeout < 40:
+        print(f"Still try connect... ({timeout * 0.5}s)")
         time.sleep(0.5)
-    print("Connected:", wlan.ifconfig())
+        timeout += 1
+
+    if wlan.isconnected():
+        wlan.config(hostname='iss_locator')
+        print("Connected:", wlan.ifconfig())
+        return True
+    else:
+        print("Failed to connect to WiFi after 20 seconds - check SSID, password, BSSID or network issues")
+        return False
 
 def loadEnvVariablesForWifi():
     try:

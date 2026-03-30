@@ -5,15 +5,17 @@ from modules.drawObjects import draw_map_viewport, drawTexts, lon_to_map_x, draw
     generateShadeLUT
 from modules.issPositionService import get_iss_position, maybe_fetch_iss, interpolate_position
 from modules.screenConfig import getScreenConfig, SCREEN_W
+from modules.st7789py import RED
 from modules.wifi import connect_wifi, syncTime
 from images.earthfull import getBitmap
+import modules.vga2_16x16 as font
 
 
 #
 # ========== MAIN ==========
 def main():
     generateShadeLUT()
-    connect_wifi()
+    connected = connect_wifi()
     syncTime()
     screen = getScreenConfig()
     track = []
@@ -43,6 +45,10 @@ def main():
         draw_track(track, scroll, screen)
 
         elapsed = time.ticks_diff(time.ticks_ms(), frame_start)
+
+        if not connected:
+          screen.text(font=font, text="NOT CONNECTED", x0=10, y0=280, color=RED)
+
         if elapsed < 40:
             time.sleep_ms(40 - elapsed)
 

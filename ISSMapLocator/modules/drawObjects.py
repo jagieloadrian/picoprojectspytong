@@ -70,7 +70,7 @@ def draw_iss(lat, lon, screen, scroll, bitmap = issBitmap):
                    screen_y - bitmap.HEIGHT//2)
 
 
-def drawTexts(screen, lat, lon, ):
+def drawTexts(screen, lat, lon):
     screen.text(font=font, text="ISS Tracker", x0=10, y0=10, color=WHITE)
     screen.text(font=font, text="Lat: {:.2f}".format(lat),
                 x0=10, y0=40, color=WHITE)
