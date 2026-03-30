@@ -10,9 +10,8 @@ def connect_wifi():
     password = wifiConfig['password']
     bssid = wifiConfig['bssid']
     wlan = network.WLAN(network.STA_IF)
-    wlan.active(False)
-    time.sleep(1)
-    wlan.active(True)
+    resetInterfaces(wlan)
+    wlan.config(txpower=8, reconnects=3)
 
     if bssid:
         bssid_bytes = bytes.fromhex(bssid.replace(':', ''))
@@ -22,18 +21,29 @@ def connect_wifi():
         wlan.connect(ssid, password)
         print(f"Connecting with SSID: {ssid}")
 
-    timeout = 0
-    while not wlan.isconnected() and timeout < 40:
-        print(f"Still try connect... ({timeout * 0.5}s)")
-        time.sleep(0.5)
-        timeout += 1
-
-    if wlan.isconnected():
-        wlan.config(hostname='iss_locator')
-        print("Connected:", wlan.ifconfig())
-        return True
+    timeout = 15
+    while timeout > 0:
+        if wlan.isconnected():
+            print("Connected with Wi-Fi! IP:", wlan.ifconfig()[0])
+            return True
+        status = wlan.status()
+        print(f"WLAN status: {status}")
+        if status in (2, 3, 4):  # wrong pwd / no AP / fail
+            print("Wi-Fi failed, doing full reset and retry...")
+            wlan.disconnect()
+            time.sleep(1)
+            resetInterfaces(wlan)
+            if bssid:
+                bssid_bytes = bytes.fromhex(bssid.replace(':', ''))
+                wlan.connect(ssid, password, bssid=bssid_bytes)
+                print(f"Connecting with BSSID: {bssid}")
+            else:
+                wlan.connect(ssid, password)
+                print(f"Connecting with SSID: {ssid}")
+        time.sleep(1)
+        timeout -= 1
     else:
-        print("Failed to connect to WiFi after 20 seconds - check SSID, password, BSSID or network issues")
+        print("Failed to connect to WiFi after 15 seconds - check SSID, password, BSSID or network issues")
         return False
 
 def loadEnvVariablesForWifi():
@@ -58,3 +68,18 @@ def syncTime():
         print(f"Synchronized time: {time.localtime()}")
     except Exception as e:
         print("Error during synchronizing time:", e)
+
+def resetInterfaces(wlan):
+    print("Resetting interfaces...")
+    ap = network.WLAN(network.AP_IF)
+
+    if wlan.active():
+        wlan.disconnect()
+        wlan.active(False)
+        time.sleep(1.5)  # give ESP32 time for clear the state
+    if ap.active():
+        ap.active(False)
+        time.sleep(0.5)
+
+    wlan.active(True)
+    time.sleep(1)

@@ -80,7 +80,7 @@ def drawTexts(screen, lat, lon):
 
 def update_track(x, y, track):
     track.append((x,y))
-    if len(track) > 120:
+    if len(track) > 240:
         track.pop(0)
 
 def draw_track(track, scroll, screen):
